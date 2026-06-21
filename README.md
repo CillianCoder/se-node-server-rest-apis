@@ -1,539 +1,130 @@
-# Production-Ready Node.js REST API
+# Production-Ready Reservation API
 
-> A comprehensive, production-ready REST API demonstrating industry best practices for building scalable, maintainable server applications.
+This repository contains a documented Node.js backend plus a Next.js frontend that demonstrates a complete reservation workflow.
 
-## 🎯 What This Project Teaches
+## What is included
 
-This is a **learning repository** designed to teach you how to build production-ready REST APIs. Every concept is implemented with extensive documentation, code comments, and explanations.
+- A REST API with validation, idempotency, concurrency-safe stock updates, and health checks
+- A Next.js 16 frontend with:
+  - an inventory shop page
+  - a single product detail page
+  - a reservation dashboard for `demo_user`
+- SQLite-backed sample data so the frontend has real inventory and reservation states to display
 
-### You Will Learn
+## Repository Layout
 
-1. ✅ **Input Validation** - How to validate and sanitize all client input
-2. ✅ **Concurrency Control** - How to prevent race conditions and overselling
-3. ✅ **Idempotency** - How to handle duplicate requests safely
-4. ✅ **Caching** - How to improve performance with intelligent caching
-5. ✅ **Structured Logging** - How to debug production issues with tracing
-6. ✅ **Security** - How to protect against common vulnerabilities
-7. ✅ **Error Handling** - How to return consistent, helpful error messages
-8. ✅ **API Design** - How to design clean, intuitive REST APIs
-9. ✅ **TypeScript** - How to write type-safe Node.js applications
-10. ✅ **Testing** - How to validate your code works correctly
+```text
+.
+|-- src/            # Backend source code
+|-- front-end/      # Next.js frontend
+|-- docs/           # Learning and architecture docs
+|-- tests/          # Test suite
+`-- README.md       # This file
+```
 
-## 🚀 Quick Start
+## Requirements
 
-### Prerequisites
+- Node.js 20 or newer
+- npm 10 or newer
 
-- **Node.js** >= 20.0.0
-- **npm** >= 10.0.0
-- **Git** (for cloning)
+## Environment Files
 
-### Installation
+- Root backend config: `.env`
+- Frontend config: `front-end/.env.local`
+- Example templates:
+  - `.env.example`
+  - `front-end/.env.example`
+
+The standard local frontend API setting is:
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3000/api/v1
+```
+
+## How To Run
+
+### 1. Install dependencies
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/se-node-server-rest-apis.git
-cd se-node-server-rest-apis
-
-# Install dependencies
 npm install
+cd front-end
+npm install
+cd ..
+```
 
-# Set up environment (optional - defaults work for development)
-cp .env.example .env
+### 2. Prepare the backend database
 
-# Run database migrations
+```bash
 npm run db:migrate
-
-# Seed the database with sample data
 npm run db:seed
+```
 
-# Start the development server
+### 3. Start the backend
+
+```bash
 npm run dev
 ```
 
-The API will be available at [http://localhost:3000](http://localhost:3000)
+Backend defaults:
 
-### Test It Out
+- API: `http://localhost:3000`
+- Health: `http://localhost:3000/health`
+- API base path: `http://localhost:3000/api/v1`
 
-```bash
-# Check health
-curl http://localhost:3000/health
+### 4. Start the frontend
 
-# List items
-curl http://localhost:3000/api/v1/items
-
-# Reserve an item
-curl -X POST http://localhost:3000/api/v1/reserve \
-  -H "Content-Type: application/json" \
-  -H "Idempotency-Key: test-key-123" \
-  -d '{"userId":"user_test","itemId":"item_1","qty":1}'
-```
-
-## 🎨 Frontend Application
-
-A modern Next.js 16 frontend with glass-morphism UI is included in the [`frontend/`](frontend/) directory.
-
-### Frontend Stack
-
-| Component | Technology |
-|-----------|-----------|
-| **Framework** | Next.js 16 (App Router) |
-| **Language** | TypeScript 5 |
-| **Styling** | Tailwind CSS 4 |
-| **UI Library** | shadcn/ui |
-| **State** | TanStack Query |
-| **Forms** | React Hook Form + Zod |
-
-### Running the Frontend
+Open a second terminal:
 
 ```bash
-# Navigate to frontend directory
-cd frontend
-
-# Install dependencies
-npm install
-
-# Set up environment
-cp .env.example .env.local
-
-# Start development server (runs on port 3001)
+cd front-end
 npm run dev
 ```
 
-The frontend will be available at [http://localhost:3001](http://localhost:3001)
+Frontend defaults:
 
-### Frontend Features
+- App: `http://localhost:3001`
 
-- ✅ **Glass-morphism Design** - Modern translucent UI with backdrop blur
-- ✅ **Real-time Updates** - TanStack Query for live data synchronization
-- ✅ **Form Validation** - Zod schemas matching backend validation
-- ✅ **Idempotency** - Automatic Idempotency-Key header generation
-- ✅ **Error Handling** - Request ID display for debugging
-- ✅ **Responsive** - Mobile-first design
+## Main Frontend Routes
 
-📖 **[frontend/README.md](frontend/README.md)** - Complete frontend documentation
+- `/` - reservation dashboard for `demo_user`
+- `/shop` - inventory listing
+- `/shop/[id]` - single product detail and reservation form
 
----
+## Backend API Summary
 
-## 📚 Learning Path
+| Method | Path | Purpose |
+| --- | --- | --- |
+| GET | `/health` | Backend health check |
+| GET | `/api/v1/items` | List inventory |
+| GET | `/api/v1/items/:id` | View one item |
+| GET | `/api/v1/reservations/user/:userId` | List user reservations |
+| GET | `/api/v1/reservations/:id` | View one reservation |
+| POST | `/api/v1/reserve` | Create a reservation |
+| POST | `/api/v1/confirm` | Confirm a reservation |
+| POST | `/api/v1/cancel` | Cancel a reservation |
+| POST | `/api/v1/expire/run` | Run the expiration sweep |
 
-### Start Here: The Documentation
+## Recommended Workflow
 
-We've created comprehensive learning documentation in the [`docs/`](docs/) directory:
+1. Start the backend first.
+2. Confirm `/health` returns healthy.
+3. Start the frontend.
+4. Use the shop page to reserve stock for `demo_user`.
+5. Use the dashboard to confirm, cancel, or inspect the active and completed reservation history.
 
-1. **[docs/01-introduction.md](docs/01-introduction.md)** - Overview and architecture
-2. **[docs/02-validation.md](docs/02-validation.md)** - Input validation with Zod
-3. **[docs/03-concurrency.md](docs/03-concurrency.md)** - Atomic database operations
-4. **[docs/04-idempotency.md](docs/04-idempotency.md)** - Handling duplicate requests
-5. **[docs/05-caching.md](docs/05-caching.md)** - Performance with caching
-6. **[docs/06-logging.md](docs/06-logging.md)** - Observability and tracing
-7. **[docs/07-validation-guide.md](docs/07-validation-guide.md)** - Complete testing guide
+## Notes
 
-**💡 Start with [docs/README.md](docs/README.md) for the full learning guide.**
+- Reservations expire automatically and return stock when the backend sweep runs.
+- The frontend reads real API responses, so if the backend is not running you will see a backend unavailable state instead of mock-only data.
+- If you change `.env` or `.env.local`, restart the affected dev server.
 
-### Testing & Validation
+## Troubleshooting
 
-- **[POSTMAN_GUIDE.md](POSTMAN_GUIDE.md)** - Complete Postman testing instructions
-- **[LEARNING_CHECKLIST.md](LEARNING_CHECKLIST.md)** - Track your learning progress
+- `Backend not reachable`: start the backend on port `3000`.
+- `Content-Type text/plain;charset=UTF-8 is not supported`: the frontend expected JSON but received a non-JSON response, usually because the backend is down or returned an error page.
+- Changes not appearing: refresh the browser after the dev server rebuilds, and restart the server if you changed env files.
 
-### Postman Collection
+## Documentation
 
-Ready-to-use Postman collection for testing all features:
-
-- **[postman-collection.json](postman-collection.json)** - Import this into Postman
-- **[postman-environment.json](postman-environment.json)** - Environment variables
-
-## 🛠️ The Stack
-
-### Backend
-
-| Component | Technology | Why? |
-|-----------|-----------|------|
-| **Runtime** | Node.js 20+ | Latest LTS, ES2022 support |
-| **Framework** | Express 4.x | Battle-tested, huge ecosystem |
-| **Language** | TypeScript 5.x | Type safety, better DX |
-| **Database** | SQLite (better-sqlite3) | Embedded, fast, zero-config |
-| **Validation** | Zod | Runtime + compile-time validation |
-| **Logging** | Pino | Ultra-fast structured logging |
-| **Security** | Helmet, CORS | Security headers, cross-origin |
-
-### Frontend
-
-| Component | Technology | Why? |
-|-----------|-----------|------|
-| **Framework** | Next.js 16 | React 19, App Router, Turbopack |
-| **Styling** | Tailwind CSS 4 | Utility-first, JIT compiler |
-| **UI Components** | shadcn/ui | Accessible, customizable |
-| **State Management** | TanStack Query | Server state, caching |
-| **Forms** | React Hook Form | Performance, flexibility |
-| **Validation** | Zod | Type-safe schema validation |
-
-## 📁 Project Structure
-
-```
-se-node-server-rest-apis/
-├── docs/                           # Learning documentation
-│   ├── README.md                   # Documentation index
-│   ├── 01-introduction.md          # Overview
-│   ├── 02-validation.md            # Input validation
-│   ├── 03-concurrency.md           # Race conditions
-│   ├── 04-idempotency.md           # Duplicate requests
-│   ├── 05-caching.md               # Performance
-│   ├── 06-logging.md               # Observability
-│   └── 07-validation-guide.md      # Complete testing guide
-│
-├── src/                            # Source code
-│   ├── cache/                      # Caching layer
-│   │   ├── index.ts                # TTL cache with invalidation
-│   │   └── README.md               # Module learning guide
-│   ├── config/                     # Configuration
-│   │   ├── index.ts                # Environment variables
-│   │   └── README.md               # Module learning guide
-│   ├── database/                   # Database layer
-│   │   ├── index.ts                # SQLite connection
-│   │   ├── migrate.ts              # Migration runner
-│   │   ├── seed.ts                 # Data seeding
-│   │   └── README.md               # Module learning guide
-│   ├── http/                       # Response utilities
-│   │   ├── index.ts                # ok(), fail() helpers
-│   │   └── README.md               # Module learning guide
-│   ├── idempotency/                # Idempotency handling
-│   │   ├── index.ts                # Duplicate request prevention
-│   │   └── README.md               # Module learning guide
-│   ├── middleware/                 # Express middleware
-│   │   ├── rateLimit.ts            # Token bucket rate limiting
-│   │   ├── security.ts             # Security headers, CORS
-│   │   └── README.md               # Module learning guide
-│   ├── observability/              # Logging & metrics
-│   │   ├── index.ts                # Pino structured logging
-│   │   └── README.md               # Module learning guide
-│   ├── routes/                     # API endpoints
-│   │   ├── index.ts                # Main routes
-│   │   ├── health.ts               # Health checks
-│   │   └── README.md               # Module learning guide
-│   ├── services/                   # Business logic
-│   │   ├── reservations.ts         # Domain logic
-│   │   └── README.md               # Module learning guide
-│   ├── types/                      # TypeScript types
-│   │   ├── index.ts                # All type definitions
-│   │   └── README.md               # Module learning guide
-│   ├── validation/                 # Zod schemas
-│   │   ├── schemas.ts              # Request/response schemas
-│   │   └── README.md               # Module learning guide
-│   └── server.ts                   # Application entry point
-│
-├── frontend/                       # Next.js 16 Frontend Application
-│   ├── src/                        # Frontend source
-│   │   ├── app/                    # Next.js App Router
-│   │   ├── components/             # React components
-│   │   │   ├── layout/             # Layout components
-│   │   │   ├── ui/                 # shadcn/ui components
-│   │   │   └── ui-blocks/          # Custom UI blocks
-│   │   └── lib/                    # Utilities
-│   │       ├── api/                # API client
-│   │       └── query/              # TanStack Query
-│   ├── .env.example                # Frontend env template
-│   ├── package.json
-│   └── README.md                   # Frontend documentation
-│
-├── postman-collection.json         # Postman collection (import this!)
-├── postman-environment.json        # Postman environment (import this!)
-├── POSTMAN_GUIDE.md                # Complete Postman instructions
-├── LEARNING_CHECKLIST.md           # Track your progress
-├── POSTMAN_COLLECTION.md           # API testing with curl
-│
-├── .env.example                    # Environment template
-├── package.json                    # Dependencies
-├── tsconfig.json                   # TypeScript config
-└── README.md                       # This file
-```
-
-## 🎓 Core Concepts
-
-### 1. Validation
-
-**Problem**: Clients send invalid or malicious data.
-
-**Solution**: Validate all input at the API boundary using Zod schemas.
-
-```typescript
-// src/validation/schemas.ts
-export const reserveRequestSchema = z.object({
-  userId: z.string().min(1),
-  itemId: z.string().regex(/^item_\d+$/),
-  qty: z.number().int().min(1).max(5)
-});
-```
-
-**Learn more**: [docs/02-validation.md](docs/02-validation.md)
-
----
-
-### 2. Concurrency Control
-
-**Problem**: Two users reserve the last item simultaneously, both succeed (overselling).
-
-**Solution**: Atomic database operations with conditional updates.
-
-```sql
-UPDATE items
-SET availableQty = availableQty - ?
-WHERE id = ? AND availableQty >= ?
-```
-
-**Learn more**: [docs/03-concurrency.md](docs/03-concurrency.md)
-
----
-
-### 3. Idempotency
-
-**Problem**: Network retries create duplicate reservations.
-
-**Solution**: Store responses by unique key, replay on duplicates.
-
-```typescript
-// First request: Process and store
-// Second request: Return cached response
-```
-
-**Learn more**: [docs/04-idempotency.md](docs/04-idempotency.md)
-
----
-
-### 4. Caching
-
-**Problem**: Repeated database queries waste resources.
-
-**Solution**: Cache responses with TTL, invalidate on changes.
-
-```typescript
-const cached = getCache('items');
-if (cached) return cached;
-
-const items = fetchItems();
-setCache('items', items, 30_000);
-```
-
-**Learn more**: [docs/05-caching.md](docs/05-caching.md)
-
----
-
-### 5. Observability
-
-**Problem**: Debugging production issues is hard without context.
-
-**Solution**: Structured logs with request tracing.
-
-```json
-{
-  "level": "info",
-  "requestId": "abc-123",
-  "msg": "Item reserved",
-  "userId": "user_1",
-  "itemId": "item_1"
-}
-```
-
-**Learn more**: [docs/06-logging.md](docs/06-logging.md)
-
----
-
-## 📖 API Documentation
-
-### Base URL
-```
-http://localhost:3000/api/v1
-```
-
-### Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/items` | List all items |
-| GET | `/items/:id` | Get single item |
-| POST | `/reserve` | Reserve an item |
-| POST | `/confirm` | Confirm reservation |
-| POST | `/cancel` | Cancel reservation |
-| GET | `/reservations/user/:userId` | List user's reservations |
-| GET | `/health` | Health check |
-
-### Response Format
-
-All responses follow a consistent format:
-
-**Success:**
-```json
-{
-  "ok": true,
-  "data": { ... }
-}
-```
-
-**Error:**
-```json
-{
-  "ok": false,
-  "error": {
-    "code": "ERROR_CODE",
-    "message": "Description",
-    "details": { ... },
-    "requestId": "uuid"
-  }
-}
-```
-
-## 🧪 Testing the API
-
-### Option 1: Postman (Recommended)
-
-**Complete testing setup ready to use:**
-
-1. Import `postman-collection.json` into Postman
-2. Import `postman-environment.json` into Postman
-3. Select "Reservation API - Local" environment
-4. Start testing!
-
-📖 **Full instructions**: [POSTMAN_GUIDE.md](POSTMAN_GUIDE.md)
-
-### Option 2: cURL / Terminal
-
-```bash
-# Health check
-curl http://localhost:3000/health
-
-# List items
-curl http://localhost:3000/api/v1/items
-
-# Reserve an item
-curl -X POST http://localhost:3000/api/v1/reserve \
-  -H "Content-Type: application/json" \
-  -H "Idempotency-Key: test-key-123" \
-  -d '{"userId":"user_test","itemId":"item_1","qty":1}'
-
-# Confirm reservation
-curl -X POST http://localhost:3000/api/v1/confirm \
-  -H "Content-Type: application/json" \
-  -d '{"userId":"user_test","reservationId":"res_abc123"}'
-```
-
-📖 **More examples**: [POSTMAN_COLLECTION.md](POSTMAN_COLLECTION.md)
-
-### Option 3: Learning Checklist
-
-Track your learning progress and validate each feature:
-
-📋 **Checklist**: [LEARNING_CHECKLIST.md](LEARNING_CHECKLIST.md)
-
-## 🛠️ Development
-
-### Available Scripts
-
-```bash
-npm run dev          # Start development server with hot reload
-npm run build        # Compile TypeScript
-npm run start        # Start production server
-npm run lint         # Lint code
-npm run format       # Format code
-npm run db:migrate   # Run database migrations
-npm run db:seed      # Seed database
-npm run clean        # Clean build output
-```
-
-### Environment Variables
-
-```bash
-# .env file (copy from .env.example)
-NODE_ENV=development
-PORT=3000
-LOG_LEVEL=debug
-DB_PATH=./app.db
-```
-
-## 📦 Project Features
-
-### ✅ Implemented
-
-- [x] **Input Validation** with Zod schemas
-- [x] **Atomic Operations** to prevent race conditions
-- [x] **Idempotency** for safe request retries
-- [x] **Response Caching** with automatic invalidation
-- [x] **Rate Limiting** (token bucket algorithm)
-- [x] **Structured Logging** with request tracing
-- [x] **Security Headers** (Helmet.js)
-- [x] **CORS Configuration**
-- [x] **Health Check Endpoints**
-- [x] **Graceful Shutdown**
-- [x] **TypeScript** (100% typed)
-- [x] **Database Migrations**
-- [x] **Consistent Error Responses**
-
-### 🎯 The Domain: Reservation System
-
-We've built a **reservation system** for an inventory store because it demonstrates:
-
-- **Time-sensitive operations** - Reservations expire after 10 minutes
-- **State transitions** - reserved → confirmed → cancelled/expired
-- **Concurrency** - Multiple users competing for limited inventory
-- **Idempotency needs** - Network retries can cause double-charging
-- **Background jobs** - Automatic expiration with stock restoration (30s interval)
-
-## 🏗️ Architecture
-
-```
-Request → Security Middleware → Rate Limiting → Validation → Route Handler
-                                                    ↓
-                                              Business Logic
-                                                    ↓
-                                              Database (SQLite)
-                                                    ↓
-                                              (Cache/Idempotency)
-                                                    ↓
-                                              Response
-```
-
-## 📚 Learning Resources
-
-### In This Repository
-
-- [`docs/README.md`](docs/README.md) - Complete learning guide
-- Each source file has extensive comments
-- Type definitions in [`src/types/index.ts`](src/types/index.ts) for reference
-
-### External Resources
-
-- [Express.js Guide](https://expressjs.com/en/guide/routing.html)
-- [Zod Documentation](https://zod.dev/)
-- [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices)
-- [REST API Tutorial](https://restfulapi.net/)
-
-## 🤝 Contributing
-
-This is a learning repository. Feel free to:
-
-1. Explore the code
-2. Make changes and break things
-3. Fix issues and learn from them
-4. Add new features
-
-## 📄 License
-
-MIT License - See LICENSE file for details
-
----
-
-## 🎓 Start Learning Now!
-
-Ready to dive in? Continue to the learning documentation:
-
-**[← Start Learning with docs/01-introduction.md](docs/01-introduction.md)**
-
-Or jump straight to a topic:
-
-- [Validation →](docs/02-validation.md)
-- [Concurrency →](docs/03-concurrency.md)
-- [Idempotency →](docs/04-idempotency.md)
-- [Caching →](docs/05-caching.md)
-- [Logging →](docs/06-logging.md)
-
----
-
-**💡 Tip**: Every file in this repository is heavily documented. Start exploring and happy learning!
+- `docs/` contains the learning material and architecture notes
+- `front-end/README.md` explains the frontend setup in more detail

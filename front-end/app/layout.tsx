@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Reservation Studio",
-  description: "Modern frontend for the reservation API learning backend",
+  description: "Next.js frontend for the reservation API demo and learning backend",
 };
 
 export default function RootLayout({

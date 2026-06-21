@@ -1,42 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend
 
-## Getting Started
+This is the Next.js 16 frontend for the reservation system.
 
-First, run the development server:
+It connects to the backend API, shows inventory, renders a single product detail page, and provides a reservation dashboard for the fixed demo account `demo_user`.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Folder Structure
+
+```text
+front-end/
+|-- app/
+|-- components/
+|-- lib/
+|-- public/
+|-- .env.example
+|-- package.json
+`-- README.md
 ```
 
-Open [http://localhost:3001](http://localhost:3001) with your browser to see the result.
+## Setup
 
-To connect to the backend, make sure the API is running on `http://localhost:3000` and set:
+1. Make sure the backend is running on `http://localhost:3000`.
+2. Create `front-end/.env.local` from `front-end/.env.example`.
+3. Keep the API base URL pointed at the backend:
 
 ```env
 NEXT_PUBLIC_API_BASE_URL=http://localhost:3000/api/v1
 ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Run
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev
+```
 
-## Learn More
+The frontend runs on `http://localhost:3001`.
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Script | Purpose |
+| --- | --- |
+| `npm run dev` | Start the development server on port 3001 |
+| `npm run build` | Create a production build |
+| `npm run start` | Start the production server on port 3001 |
+| `npm run lint` | Run ESLint |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Routes
 
-## Deploy on Vercel
+| Route | Purpose |
+| --- | --- |
+| `/` | Reservation dashboard for `demo_user` |
+| `/shop` | Inventory listing |
+| `/shop/[id]` | Product detail page with quantity validation and reserve action |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## UI Behavior
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Reads live backend inventory and reservation data
+- Uses a real reservation lifecycle instead of mock-only state
+- Supports confirm, cancel, and expiration sweep actions
+- Shows exact timestamps and validation errors clearly
+
+## Best Practices Used
+
+- Environment variables for API configuration
+- Server-driven data loading where it helps keep the UI consistent
+- Client-side actions for interactive reservation changes
+- Clear empty states, error states, and loading states
+- Quantity validation before and after the API request
+
+## Notes
+
+- If the backend is down, the frontend will show a service-unavailable state.
+- If you change `front-end/.env.local`, restart `npm run dev`.
+- The `demo_user` account is used intentionally so the dashboard has a stable default context.

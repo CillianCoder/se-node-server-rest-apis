@@ -36,7 +36,7 @@ function createKey() {
 }
 
 function formatExactTime(value?: number): string {
-  if (!value) return "—";
+  if (!value) return "N/A";
 
   return new Intl.DateTimeFormat("en-GB", {
     dateStyle: "medium",
@@ -46,13 +46,13 @@ function formatExactTime(value?: number): string {
 }
 
 function formatIsoTime(value?: number): string {
-  if (!value) return "—";
+  if (!value) return "N/A";
   return new Date(value).toISOString();
 }
 
 function formatCountdown(expiresAt?: number, now = Date.now()): string {
-  if (!expiresAt) return "—";
-  if (!now) return "—";
+  if (!expiresAt) return "N/A";
+  if (!now) return "N/A";
 
   const remainingMs = expiresAt - now;
   if (remainingMs <= 0) return "Expired";
@@ -316,7 +316,7 @@ export default function ReservationDashboard({
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
       <section className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
-        <div className="rounded-[2rem] border border-white/10 bg-[var(--card)] p-6 shadow-2xl shadow-sky-950/30 backdrop-blur-xl">
+        <div className="rounded-[2rem] border border-white/10 bg-[var(--card)] p-7 shadow-2xl shadow-sky-950/30 backdrop-blur-xl">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-2xl">
               <p className="text-sm uppercase tracking-[0.35em] text-sky-200/70">Reservation Studio</p>
@@ -335,7 +335,7 @@ export default function ReservationDashboard({
             </div>
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center gap-3">
+          <div className="mt-7 flex flex-wrap items-center gap-3">
             <ShopNav />
             <button
               className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-100 transition hover:bg-white/10 disabled:opacity-50"
@@ -352,6 +352,10 @@ export default function ReservationDashboard({
               {busy?.kind === "expire" ? "Running sweep..." : "Run expiration sweep"}
             </button>
           </div>
+          <p className="mt-3 text-sm text-slate-400">
+            Use refresh when you want the latest API state, or run the sweep to test expiry and
+            stock restoration.
+          </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
@@ -365,7 +369,7 @@ export default function ReservationDashboard({
           ].map(([label, value]) => (
             <div key={label} className="rounded-3xl border border-white/10 bg-white/5 p-5">
               <div className="text-xs uppercase tracking-[0.3em] text-slate-400">{label}</div>
-              <div className="mt-3 text-base font-medium text-white">{value}</div>
+              <div className="mt-3 text-lg font-semibold text-white">{value}</div>
             </div>
           ))}
         </div>
@@ -385,14 +389,17 @@ export default function ReservationDashboard({
 
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="space-y-6">
-          <div className="rounded-[2rem] border border-white/10 bg-[rgba(10,19,35,0.86)] p-6 backdrop-blur-xl">
-            <div className="flex items-center justify-between gap-4">
+          <div className="rounded-[2rem] border border-white/10 bg-[rgba(10,19,35,0.86)] p-7 backdrop-blur-xl">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <h2 className="text-xl font-semibold text-white">Inventory snapshot</h2>
               <div className="text-sm text-slate-400">{items.length} products</div>
             </div>
+            <p className="mt-2 text-sm leading-6 text-slate-400">
+              Quick overview of live stock before you open a product detail page.
+            </p>
 
             <div className="mt-5 overflow-x-auto">
-              <table className="min-w-full border-separate border-spacing-y-3">
+              <table className="min-w-full border-separate border-spacing-y-4">
                 <thead>
                   <tr className="text-left text-xs uppercase tracking-[0.3em] text-slate-400">
                     <th className="px-3 py-2">Product</th>
@@ -405,10 +412,10 @@ export default function ReservationDashboard({
                   {items.map((item) => (
                     <tr key={item.id} className="rounded-2xl bg-white/5">
                       <td className="px-3 py-4">
-                        <div className="font-medium text-white">{item.name}</div>
+                        <div className="text-base font-semibold text-white">{item.name}</div>
                         <div className="font-mono text-xs text-slate-500">{item.id}</div>
                       </td>
-                      <td className="px-3 py-4 text-white">{item.availableQty}</td>
+                      <td className="px-3 py-4 text-lg font-semibold text-white">{item.availableQty}</td>
                       <td className="px-3 py-4">
                         <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs text-slate-200">
                           {item.availableQty === 0
@@ -434,13 +441,16 @@ export default function ReservationDashboard({
           </div>
 
           <form
-            className="rounded-[2rem] border border-white/10 bg-[rgba(10,19,35,0.86)] p-6 backdrop-blur-xl"
+            className="rounded-[2rem] border border-white/10 bg-[rgba(10,19,35,0.86)] p-7 backdrop-blur-xl"
             onSubmit={handleReserve}
           >
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-sm uppercase tracking-[0.3em] text-slate-400">New hold</p>
                 <h2 className="mt-2 text-2xl font-semibold text-white">Reserve for demo_user</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-400">
+                  This form mirrors the backend contract and keeps the quantity bounded by stock.
+                </p>
               </div>
               <div className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-sm text-sky-100">
                 Max {maxQty || 0}
@@ -516,7 +526,7 @@ export default function ReservationDashboard({
                 className="rounded-full bg-sky-400 px-4 py-3 font-medium text-slate-950 transition hover:bg-sky-300 disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={busy?.kind === "reserve" || Boolean(quantityError)}
               >
-                {busy?.kind === "reserve" ? "Reserving..." : "Reserve item"}
+                {busy?.kind === "reserve" ? "Reserving..." : "Create reservation"}
               </button>
 
               {selectedItem ? (
@@ -533,17 +543,21 @@ export default function ReservationDashboard({
         </div>
 
         <div className="space-y-6">
-          <section className="rounded-[2rem] border border-white/10 bg-[rgba(10,19,35,0.86)] p-6 backdrop-blur-xl">
-            <div className="flex items-center justify-between gap-4">
+          <section className="rounded-[2rem] border border-white/10 bg-[rgba(10,19,35,0.86)] p-7 backdrop-blur-xl">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Active queue</p>
                 <h2 className="mt-2 text-2xl font-semibold text-white">Reserved holds</h2>
               </div>
               <div className="text-sm text-slate-400">{activeReservations.length} active</div>
             </div>
+            <p className="mt-2 text-sm leading-6 text-slate-400">
+              Confirm or cancel while the item is active. Expired rows stay visible until the sweep
+              restores stock.
+            </p>
 
             <div className="mt-5 overflow-x-auto">
-              <table className="min-w-full border-separate border-spacing-y-3">
+              <table className="min-w-full border-separate border-spacing-y-4">
                 <thead>
                   <tr className="text-left text-xs uppercase tracking-[0.3em] text-slate-400">
                     <th className="px-3 py-2">Reservation</th>
@@ -574,7 +588,7 @@ export default function ReservationDashboard({
                       return (
                         <tr key={reservation.id} className="rounded-2xl bg-white/5">
                           <td className="px-3 py-4 align-top">
-                            <div className="font-medium text-white">{reservation.id}</div>
+                            <div className="font-semibold text-white">{reservation.id}</div>
                             <div className="mt-1 text-xs text-slate-500">{reservation.userId}</div>
                           </td>
                           <td className="px-3 py-4 align-top">
@@ -612,14 +626,14 @@ export default function ReservationDashboard({
                           <td className="px-3 py-4 align-top">
                             <div className="flex flex-wrap gap-2">
                               <button
-                                className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-xs font-medium text-emerald-100 disabled:opacity-40"
+                                className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-xs font-medium text-emerald-100 transition hover:bg-emerald-400/15 disabled:opacity-40"
                                 onClick={() => handleReservationAction("confirm", reservation)}
                                 disabled={isExpired || isConfirming || isCancelling}
                               >
                                 {isConfirming ? "Confirming..." : "Confirm"}
                               </button>
                               <button
-                                className="rounded-full border border-rose-400/20 bg-rose-400/10 px-3 py-2 text-xs font-medium text-rose-100 disabled:opacity-40"
+                                className="rounded-full border border-rose-400/20 bg-rose-400/10 px-3 py-2 text-xs font-medium text-rose-100 transition hover:bg-rose-400/15 disabled:opacity-40"
                                 onClick={() => handleReservationAction("cancel", reservation)}
                                 disabled={isExpired || isConfirming || isCancelling}
                               >
@@ -641,8 +655,8 @@ export default function ReservationDashboard({
             </div>
           </section>
 
-          <section className="rounded-[2rem] border border-white/10 bg-[rgba(10,19,35,0.86)] p-6 backdrop-blur-xl">
-            <div className="flex items-center justify-between gap-4">
+          <section className="rounded-[2rem] border border-white/10 bg-[rgba(10,19,35,0.86)] p-7 backdrop-blur-xl">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Reservation history</p>
                 <h2 className="mt-2 text-2xl font-semibold text-white">
@@ -658,7 +672,7 @@ export default function ReservationDashboard({
             </p>
 
             <div className="mt-5 overflow-x-auto">
-              <table className="min-w-full border-separate border-spacing-y-3">
+              <table className="min-w-full border-separate border-spacing-y-4">
                 <thead>
                   <tr className="text-left text-xs uppercase tracking-[0.3em] text-slate-400">
                     <th className="px-3 py-2">Reservation</th>
@@ -680,7 +694,7 @@ export default function ReservationDashboard({
                     completedReservations.map((reservation) => (
                       <tr key={reservation.id} className="rounded-2xl bg-white/5">
                         <td className="px-3 py-4 align-top">
-                          <div className="font-medium text-white">{reservation.id}</div>
+                          <div className="font-semibold text-white">{reservation.id}</div>
                           <div className="mt-1 text-xs text-slate-500">{reservation.userId}</div>
                         </td>
                         <td className="px-3 py-4 align-top text-sky-200">

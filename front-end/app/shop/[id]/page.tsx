@@ -56,7 +56,7 @@ export default async function ProductPage({
             ].map(([label, value]) => (
               <div key={label} className="rounded-3xl border border-white/10 bg-black/15 p-4">
                 <div className="text-xs uppercase tracking-[0.3em] text-slate-400">{label}</div>
-                <div className="mt-3 text-base font-medium text-white">{value}</div>
+                <div className="mt-3 text-lg font-semibold text-white">{value}</div>
               </div>
             ))}
           </div>
@@ -68,6 +68,21 @@ export default async function ProductPage({
               reservation action close to the product, and uses backend validation limits for
               quantity selection.
             </p>
+          </div>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-3xl border border-white/10 bg-black/15 p-5">
+              <div className="text-xs uppercase tracking-[0.3em] text-slate-400">Reservation rule</div>
+              <div className="mt-3 text-sm leading-6 text-slate-200">
+                Quantity is clamped to the backend maximum and the live stock level.
+              </div>
+            </div>
+            <div className="rounded-3xl border border-white/10 bg-black/15 p-5">
+              <div className="text-xs uppercase tracking-[0.3em] text-slate-400">Lifecycle</div>
+              <div className="mt-3 text-sm leading-6 text-slate-200">
+                Reserved items can be confirmed, cancelled, or expire and return stock.
+              </div>
+            </div>
           </div>
 
           <div className="mt-6">
@@ -90,23 +105,29 @@ export default async function ProductPage({
         </div>
 
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {otherItems.slice(0, 6).map((entry) => (
-            <Link
-              key={entry.id}
-              href={`/shop/${entry.id}`}
-              className="rounded-3xl border border-white/10 bg-white/5 p-4 transition hover:border-sky-300/30 hover:bg-white/[0.08]"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <div className="text-sm font-medium text-white">{entry.name}</div>
-                  <div className="mt-1 font-mono text-xs text-slate-500">{entry.id}</div>
+          {otherItems.length === 0 ? (
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-5 text-sm text-slate-300 md:col-span-2 xl:col-span-3">
+              No other products are available right now.
+            </div>
+          ) : (
+            otherItems.slice(0, 6).map((entry) => (
+              <Link
+                key={entry.id}
+                href={`/shop/${entry.id}`}
+                className="rounded-3xl border border-white/10 bg-white/5 p-4 transition hover:border-sky-300/30 hover:bg-white/[0.08]"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-medium text-white">{entry.name}</div>
+                    <div className="mt-1 font-mono text-xs text-slate-500">{entry.id}</div>
+                  </div>
+                  <div className="rounded-full bg-black/20 px-3 py-1 text-sm text-sky-100">
+                    {entry.availableQty}
+                  </div>
                 </div>
-                <div className="rounded-full bg-black/20 px-3 py-1 text-sm text-sky-100">
-                  {entry.availableQty}
-                </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))
+          )}
         </div>
       </section>
     </main>
